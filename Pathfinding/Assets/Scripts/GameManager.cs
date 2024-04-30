@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    public GameObject token1, token2, token3, token4;
+    public GameObject token1, token2, token3, token4, token5;
     private int[,] GameMatrix; //0 not chosen, 1 player, 2 enemy
     private int[] startPos = new int[2];
     private int[] objectivePos = new int[2];
@@ -19,6 +19,7 @@ public class GameManager : MonoBehaviour
     bool win = false;
 
     int posicioLlista = 0;
+    bool alreadyDone = false;
     private void Awake()
     {
         GameMatrix = new int[Calculator.length, Calculator.length];
@@ -76,7 +77,7 @@ public class GameManager : MonoBehaviour
     //EL VOSTRE EXERCICI COMENÇA AQUI
     private void Update()
     {
-        if(!win && Input.GetKeyDown(KeyCode.Space))
+        if(!win)
         {
             //Left
             if (actualNode.posicio[1] - 1 >= 0)
@@ -103,20 +104,26 @@ public class GameManager : MonoBehaviour
             if (actualNode.posicio[0] + 1 <= Calculator.length)
             {
                 Node bottomNode = new Node(getArray(actualNode.posicio[0] + 1, actualNode.posicio[1]), objectiveNode.posicio);
-                llistaOberta.Add(bottomNode);
-                InstantiateToken(token3, getArray(actualNode.posicio[0] + 1, actualNode.posicio[1]));
+                llistaOberta.Add(bottomNode);          
             }
             actualNode = getBestNode(llistaOberta[posicioLlista], llistaOberta[posicioLlista+1], llistaOberta[posicioLlista+2], llistaOberta[posicioLlista+3]);
-            posicioLlista = posicioLlista + 4;
             llistaTancada.Add(actualNode);
-            InstantiateToken(token4, actualNode.posicio);
-            Debug.Log("actual " + actualNode.posicio[0] + " " + actualNode.posicio[1]);
-            Debug.Log("objective " + objectiveNode.posicio[0] + " " + objectiveNode.posicio[1]);
-
+            posicioLlista = posicioLlista + 4;
         }
         if (actualNode.posicio[0] == objectiveNode.posicio[0] && actualNode.posicio[1] == objectiveNode.posicio[1])
         {
             win = true;
+            if (!alreadyDone)
+            {
+                foreach(Node node in llistaTancada)
+                {
+                    InstantiateToken(token4, node.posicio);
+                }
+                Debug.Log(llistaOberta.Count);
+                Debug.Log(llistaTancada.Count);
+                alreadyDone = true;
+            }
+            
         }       
     }
     Node getBestNode(Node topNode, Node bottomNode,  Node leftNode, Node rightNode) 

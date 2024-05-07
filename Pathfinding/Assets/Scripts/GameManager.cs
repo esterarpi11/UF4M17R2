@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEditor.Experimental.GraphView;
 using UnityEditor.Tilemaps;
 using UnityEngine;
@@ -83,29 +84,26 @@ public class GameManager : MonoBehaviour
             //Left
             if (actualNode.posicio[1] - 1 >= 0)
             {
-                Node leftNode = new Node(getArray(actualNode.posicio[0], actualNode.posicio[1] - 1), objectiveNode.posicio);
-                llistaOberta.Add(leftNode);
+                llistaOberta.Add(new Node(getArray(actualNode.posicio[0], actualNode.posicio[1] - 1), objectiveNode.posicio));
                 InstantiateToken(token3, getArray(actualNode.posicio[0], actualNode.posicio[1] - 1));
             }
             //Right
-            if (actualNode.posicio[1] + 1 <= Calculator.length)
+            if (actualNode.posicio[1] + 1 < Calculator.length)
             {
-                Node rightNode = new Node(getArray(actualNode.posicio[0], actualNode.posicio[1] + 1), objectiveNode.posicio);
-                llistaOberta.Add(rightNode);
+                llistaOberta.Add(new Node(getArray(actualNode.posicio[0], actualNode.posicio[1] + 1), objectiveNode.posicio));
                 InstantiateToken(token3, getArray(actualNode.posicio[0], actualNode.posicio[1] + 1));
             }
             //Top
             if (actualNode.posicio[0] - 1 >= 0)
             {
-                Node topNode = new Node(getArray(actualNode.posicio[0] - 1, actualNode.posicio[1]), objectiveNode.posicio);
-                llistaOberta.Add(topNode);
+                llistaOberta.Add(new Node(getArray(actualNode.posicio[0] - 1, actualNode.posicio[1]), objectiveNode.posicio));
                 InstantiateToken(token3, getArray(actualNode.posicio[0] - 1, actualNode.posicio[1]));
             }
             //Bottom
-            if (actualNode.posicio[0] + 1 <= Calculator.length)
+            if (actualNode.posicio[0] + 1 < Calculator.length)
             {
-                Node bottomNode = new Node(getArray(actualNode.posicio[0] + 1, actualNode.posicio[1]), objectiveNode.posicio);
-                llistaOberta.Add(bottomNode);          
+                llistaOberta.Add(new Node(getArray(actualNode.posicio[0] + 1, actualNode.posicio[1]), objectiveNode.posicio));
+                InstantiateToken(token3, getArray(actualNode.posicio[0] + 1, actualNode.posicio[1]));
             }
             actualNode = getBestNode(llistaOberta[posicioLlista], llistaOberta[posicioLlista+1], llistaOberta[posicioLlista+2], llistaOberta[posicioLlista+3]);
             llistaTancada.Add(actualNode);
@@ -117,33 +115,32 @@ public class GameManager : MonoBehaviour
             if (!alreadyDone)
             {
                 List<Node> camiEscollit = new List<Node>();
-                Node actualNode = llistaTancada[0];
+                Node currentNode = llistaTancada[0];
                 camiEscollit.Add(actualNode);
 
-                foreach (Node node in llistaTancada)
-                {
-                    InstantiateToken(token4, node.posicio);
-                }
+                StartCoroutine(print(llistaTancada, 1, token4)); 
+                
                 for(int i = 1; i < llistaTancada.Count; i++)
                 {                    
-                    if (actualNode.heuristica >= llistaTancada[i].heuristica)
+                    if (currentNode.heuristica > llistaTancada[i].heuristica)
                     {
                         camiEscollit.Add(llistaTancada[i]);
                         actualNode = llistaTancada[i];
                     }
                 }
-                foreach (Node node in camiEscollit)
-                {
-                    InstantiateToken(token5, node.posicio);
-                }
+
+                StartCoroutine(print(camiEscollit, 2, token5));
                 alreadyDone = true;
-            }
-            
+            }          
         }       
     }
-    IEnumerator printLlistaTancada()
+    IEnumerator print(List<Node> llista, int seconds, GameObject token)
     {
-        yield return new WaitForSeconds(.1f);
+        yield return new WaitForSeconds(seconds);
+        foreach (Node node in llista)
+        {
+            InstantiateToken(token, node.posicio);
+        }
     }
     Node getBestNode(Node topNode, Node bottomNode,  Node leftNode, Node rightNode) 
     {

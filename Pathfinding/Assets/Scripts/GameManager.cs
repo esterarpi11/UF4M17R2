@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEditor.Tilemaps;
 using UnityEngine;
 
@@ -115,16 +116,34 @@ public class GameManager : MonoBehaviour
             win = true;
             if (!alreadyDone)
             {
-                foreach(Node node in llistaTancada)
+                List<Node> camiEscollit = new List<Node>();
+                Node actualNode = llistaTancada[0];
+                camiEscollit.Add(actualNode);
+
+                foreach (Node node in llistaTancada)
                 {
                     InstantiateToken(token4, node.posicio);
                 }
-                Debug.Log(llistaOberta.Count);
-                Debug.Log(llistaTancada.Count);
+                for(int i = 1; i < llistaTancada.Count; i++)
+                {                    
+                    if (actualNode.heuristica >= llistaTancada[i].heuristica)
+                    {
+                        camiEscollit.Add(llistaTancada[i]);
+                        actualNode = llistaTancada[i];
+                    }
+                }
+                foreach (Node node in camiEscollit)
+                {
+                    InstantiateToken(token5, node.posicio);
+                }
                 alreadyDone = true;
             }
             
         }       
+    }
+    IEnumerator printLlistaTancada()
+    {
+        yield return new WaitForSeconds(.1f);
     }
     Node getBestNode(Node topNode, Node bottomNode,  Node leftNode, Node rightNode) 
     {

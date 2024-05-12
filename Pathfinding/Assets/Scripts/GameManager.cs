@@ -129,6 +129,8 @@ public class GameManager : MonoBehaviour
             actualNode = getBestNodeLlista(llistaOberta);
             llistaTancada.Add(actualNode);
         }
+
+        //A veces nunca llega a la posición final aunque otras veces sí lo hace. Tiene algo que ver con el cálculo del coste total.
         if (GameMatrix[actualNode.posicio[0], actualNode.posicio[1]] == 2)
         {
             win = true;
@@ -142,7 +144,7 @@ public class GameManager : MonoBehaviour
 
                 for (int i = 1; i < llistaTancada.Count; i++)
                 {
-                    if (currentNode.heuristica >= llistaTancada[i].heuristica)
+                    if (currentNode.total >= llistaTancada[i].total)
                     {
                         camiEscollit.Add(llistaTancada[i]);
                         currentNode = llistaTancada[i];
@@ -162,6 +164,7 @@ public class GameManager : MonoBehaviour
             InstantiateToken(token, node.posicio);
         }
     }
+    //No sé como hacer para que cuando encuentre un obstáculo no se quede en bucle delante de él
     Node getBestNodeLlista(List<Node> llistaOberta)
     {
         Node bestnode = llistaOberta[0];

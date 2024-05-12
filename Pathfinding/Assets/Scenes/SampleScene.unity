@@ -333,6 +333,7 @@ MonoBehaviour:
   token3: {fileID: 6080297049774802956, guid: 642914e007dea67468b6add374813c0f, type: 3}
   token4: {fileID: 6080297049774802956, guid: fed4a3247a4847f40851551c1cf8d7ff, type: 3}
   token5: {fileID: 6080297049774802956, guid: 08e27645312e9f147bc19cf85c7e81f4, type: 3}
+  token6: {fileID: 7115763792773828592, guid: 1a646b49ff120f849a73aed928f70aea, type: 3}
 --- !u!4 &1072300322
 Transform:
   m_ObjectHideFlags: 0

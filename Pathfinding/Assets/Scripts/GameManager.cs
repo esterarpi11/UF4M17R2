@@ -19,8 +19,6 @@ public class GameManager : MonoBehaviour
     Node objectiveNode;
 
     bool win = false;
-
-    int posicioLlista = 0;
     bool alreadyDone = false;
     private void Awake()
     {
@@ -76,7 +74,7 @@ public class GameManager : MonoBehaviour
         }
         Debug.Log(matrix);
     }
-    //EL VOSTRE EXERCICI COMEN�A AQUI
+    //EL VOSTRE EXERCICI COMEN�A AQUI
     private void Update()
     {
         if(!win)
@@ -105,11 +103,10 @@ public class GameManager : MonoBehaviour
                 llistaOberta.Add(new Node(getArray(actualNode.posicio[0] + 1, actualNode.posicio[1]), objectiveNode.posicio));
                 InstantiateToken(token3, getArray(actualNode.posicio[0] + 1, actualNode.posicio[1]));
             }
-            actualNode = getBestNode(llistaOberta[posicioLlista], llistaOberta[posicioLlista+1], llistaOberta[posicioLlista+2], llistaOberta[posicioLlista+3]);
+            actualNode = getBestNode(llistaOberta);
             llistaTancada.Add(actualNode);
-            posicioLlista = posicioLlista + 4;
         }
-        if (actualNode.posicio[0] == objectiveNode.posicio[0] && actualNode.posicio[1] == objectiveNode.posicio[1])
+        if (GameMatrix[actualNode.posicio[0], actualNode.posicio[1]] == 2)
         {
             win = true;
             if (!alreadyDone)
@@ -120,9 +117,10 @@ public class GameManager : MonoBehaviour
 
                 StartCoroutine(print(llistaTancada, 1, token4)); 
                 
+                //Comprova el cami més adient
                 for(int i = 1; i < llistaTancada.Count; i++)
                 {                    
-                    if (currentNode.heuristica > llistaTancada[i].heuristica)
+                    if (currentNode.total > llistaTancada[i].total)
                     {
                         camiEscollit.Add(llistaTancada[i]);
                         actualNode = llistaTancada[i];
@@ -134,6 +132,7 @@ public class GameManager : MonoBehaviour
             }          
         }       
     }
+
     IEnumerator print(List<Node> llista, int seconds, GameObject token)
     {
         yield return new WaitForSeconds(seconds);
@@ -142,14 +141,19 @@ public class GameManager : MonoBehaviour
             InstantiateToken(token, node.posicio);
         }
     }
-    Node getBestNode(Node topNode, Node bottomNode,  Node leftNode, Node rightNode) 
+
+    //Comprova quin valor té la menor heurísitca tenint en compte el cost
+    Node getBestNode(List<Node> llista) 
     {
-        Node bestNode = topNode;
-        if(bottomNode.heuristica < bestNode.heuristica) bestNode = bottomNode;    
-        if(leftNode.heuristica < bestNode.heuristica) bestNode = leftNode;
-        if (rightNode.heuristica < bestNode.heuristica) bestNode = rightNode;
-        return bestNode;
+        Node bestnode = llistaOberta[0];
+        foreach (Node node in llistaOberta)
+        {
+            if (bestnode.total > node.total) bestnode = node;
+        }
+        return bestnode;
     }
+
+    //Genera un array en cas que sigui necesari
     int[] getArray(int a, int b)
     {
         int[] array = {a, b };
